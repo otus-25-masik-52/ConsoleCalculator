@@ -1,7 +1,12 @@
 #pragma once
 
-#include "types/calculator-data.h"
+#include "impl/icalculator.h"
 
 namespace Calculator {
-  void check_arguments(Types::CalculatorData *data);
+class Checker : public ICalculator {
+ public:
+  explicit Checker(Types::CalculatorData& data);
+
+  void check_arguments();
+};
 } // namespace Calculator

@@ -1,11 +1,16 @@
 #pragma once
 
-#include "types/calculator-data.h"
+#include "impl/icalculator.h"
 
 namespace Calculator {
-  void print_result(const Types::CalculatorData *data);
+class Printer : public ICalculator {
+ public:
+  explicit Printer(Types::CalculatorData& data);
 
-  void print_help();
+  static void print_help();
+  static void print_error(int error_code);
 
-  void print_error(int error_code);
+  void print_result();
+};
+
 } // namespace Calculator
