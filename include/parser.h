@@ -8,6 +8,7 @@ namespace Calculator {
 class Parser : public ICalculator {
  public:
   explicit Parser(Types::CalculatorData& data);
+  ~Parser() override = default;
 
   static int parse_int(const char* text, int* value);
   static int parse_operation(const char* text, int* operation);

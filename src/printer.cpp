@@ -31,37 +31,37 @@ void Printer::print_help() {
 
 void Printer::print_error(const int error_code) {
   switch (error_code) {
-  case Types::ERR_UNKNOWN_OPTION:
+  case static_cast<int>(Types::ErrorCode::ERR_UNKNOWN_OPTION):
     printf("Error: unknown option, unexpected argument, or invalid JSON input.\n");
     break;
-  case Types::ERR_INVALID_NUMBER:
+  case static_cast<int>(Types::ErrorCode::ERR_INVALID_NUMBER):
     printf("Error: invalid integer value.\n");
     break;
-  case Types::ERR_MISSING_FIRST_NUMBER:
+  case static_cast<int>(Types::ErrorCode::ERR_MISSING_FIRST_NUMBER):
     printf("Error: first number is missing.\n");
     break;
-  case Types::ERR_MISSING_SECOND_NUMBER:
+  case static_cast<int>(Types::ErrorCode::ERR_MISSING_SECOND_NUMBER):
     printf("Error: second number is missing.\n");
     break;
-  case Types::ERR_MISSING_OPERATION:
+  case static_cast<int>(Types::ErrorCode::ERR_MISSING_OPERATION):
     printf("Error: operation is missing.\n");
     break;
-  case Types::ERR_INVALID_OPERATION:
+  case static_cast<int>(Types::ErrorCode::ERR_INVALID_OPERATION):
     printf("Error: invalid operation. Use add, sub, mul, div, pow or fact.\n");
     break;
-  case Types::ERR_DIVISION_BY_ZERO:
+  case static_cast<int>(Types::ErrorCode::ERR_DIVISION_BY_ZERO):
     printf("Error: division by zero.\n");
     break;
-  case Types::ERR_NEGATIVE_FACTORIAL:
+  case static_cast<int>(Types::ErrorCode::ERR_NEGATIVE_FACTORIAL):
     printf("Error: factorial is defined only for non-negative integers.\n");
     break;
-  case Types::ERR_NEGATIVE_POWER:
+  case static_cast<int>(Types::ErrorCode::ERR_NEGATIVE_POWER):
     printf("Error: negative power is not supported for integer result.\n");
     break;
-  case Types::ERR_OVERFLOW:
+  case static_cast<int>(Types::ErrorCode::ERR_OVERFLOW):
     printf("Error: integer overflow detected.\n");
     break;
-  case Types::ERR_INVALID_JSON:
+  case static_cast<int>(Types::ErrorCode::ERR_INVALID_JSON):
     printf("Error: invalid JSON input.\n");
     break;
   default:
@@ -77,9 +77,9 @@ void Printer::print_result() {
     return;
   }
 
-  if (data_.error_code != Types::ERR_NONE) {
-    Logger::warn(std::string("Printing error with code: ") + std::to_string(data_.error_code));
-    print_error(data_.error_code);
+  if (data_.error_code != Types::ErrorCode::ERR_NONE) {
+    Logger::warn(std::string("Printing error with code: ") + std::to_string(static_cast<int>(data_.error_code)));
+    print_error(static_cast<int>(data_.error_code));
     return;
   }
 

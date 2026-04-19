@@ -7,7 +7,7 @@
 
 TEST(PrinterTest, PrintsInvalidJsonMessage) {
   testing::internal::CaptureStdout();
-  Calculator::Printer::print_error(Calculator::Types::ERR_INVALID_JSON);
+  Calculator::Printer::print_error(static_cast<int>(Calculator::Types::ErrorCode::ERR_INVALID_JSON));
   const std::string output = testing::internal::GetCapturedStdout();
   EXPECT_NE(output.find("invalid JSON input"), std::string::npos);
 }

@@ -14,14 +14,14 @@ Abacus::Abacus(Types::CalculatorData& data) : ICalculator(data) {}
 int Abacus::map_math_error(const int math_error) {
   switch (math_error) {
   case CalculatorMath::ERR_NONE:
-    return Calculator::Types::ERR_NONE;
+    return static_cast<int>(Types::ErrorCode::ERR_NONE);
   case CalculatorMath::ERR_OVERFLOW:
-    return Calculator::Types::ERR_OVERFLOW;
+    return static_cast<int>(Types::ErrorCode::ERR_OVERFLOW);
   case CalculatorMath::ERR_DIV_ZERO:
-    return Calculator::Types::ERR_DIVISION_BY_ZERO;
+    return static_cast<int>(Types::ErrorCode::ERR_DIVISION_BY_ZERO);
   case CalculatorMath::ERR_INVALID_ARGUMENTS:
   default:
-    return Calculator::Types::ERR_INVALID_OPERATION;
+    return static_cast<int>(Types::ErrorCode::ERR_INVALID_OPERATION);
   }
 }
 
@@ -36,31 +36,31 @@ void Abacus::calculate_result() {
   }
 
   switch (data_.operation) {
-  case Types::OP_ADD:
+  case Types::OperationCode::OP_ADD:
     math_status = CalculatorMath::addition(data_.first_number, data_.second_number, &data_.result);
     break;
-  case Types::OP_SUB:
+  case Types::OperationCode::OP_SUB:
     math_status = CalculatorMath::subtraction(data_.first_number, data_.second_number, &data_.result);
     break;
-  case Types::OP_MUL:
+  case Types::OperationCode::OP_MUL:
     math_status = CalculatorMath::multiplication(data_.first_number, data_.second_number, &data_.result);
     break;
-  case Types::OP_DIV:
+  case Types::OperationCode::OP_DIV:
     math_status = CalculatorMath::division(data_.first_number, data_.second_number, &data_.result);
     break;
-  case Types::OP_POW:
+  case Types::OperationCode::OP_POW:
     math_status = CalculatorMath::exponentiation(data_.first_number, data_.second_number, &data_.result);
     break;
-  case Types::OP_FACT:
+  case Types::OperationCode::OP_FACT:
     math_status = CalculatorMath::factorial(data_.first_number, &data_.result);
     break;
   default:
     Logger::error("Unknown operation code received by calculator.");
-    throw CalculatorException(Types::ERR_INVALID_OPERATION, "Unknown operation code.");
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_OPERATION), "Unknown operation code.");
   }
 
   const int mapped_error = map_math_error(math_status);
-  if (mapped_error != Types::ERR_NONE) {
+  if (mapped_error != static_cast<int>(Types::ErrorCode::ERR_NONE)) {
     Logger::warn(std::string("Calculation finished with error code: ") + std::to_string(mapped_error));
     throw CalculatorException(mapped_error, "Calculation failed.");
   }

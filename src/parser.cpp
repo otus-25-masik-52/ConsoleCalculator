@@ -51,32 +51,32 @@ int Parser::parse_operation(const char* text, int* operation) {
   }
 
   if (strcmp(text, "add") == 0) {
-    *operation = Types::OP_ADD;
+    *operation = static_cast<int>(Types::OperationCode::OP_ADD);
     return 1;
   }
 
   if (strcmp(text, "sub") == 0) {
-    *operation = Types::OP_SUB;
+    *operation = static_cast<int>(Types::OperationCode::OP_SUB);
     return 1;
   }
 
   if (strcmp(text, "mul") == 0) {
-    *operation = Types::OP_MUL;
+    *operation = static_cast<int>(Types::OperationCode::OP_MUL);
     return 1;
   }
 
   if (strcmp(text, "div") == 0) {
-    *operation = Types::OP_DIV;
+    *operation = static_cast<int>(Types::OperationCode::OP_DIV);
     return 1;
   }
 
   if (strcmp(text, "pow") == 0) {
-    *operation = Types::OP_POW;
+    *operation = static_cast<int>(Types::OperationCode::OP_POW);
     return 1;
   }
 
   if (strcmp(text, "fact") == 0) {
-    *operation = Types::OP_FACT;
+    *operation = static_cast<int>(Types::OperationCode::OP_FACT);
     return 1;
   }
 
@@ -85,7 +85,7 @@ int Parser::parse_operation(const char* text, int* operation) {
 
 std::string Parser::read_json_payload(const char* text_or_path) {
   if (text_or_path == nullptr) {
-    throw CalculatorException(Types::ERR_INVALID_JSON, "JSON source is null.");
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_JSON), "JSON source is null.");
   }
 
   std::ifstream input_file(text_or_path);
@@ -110,16 +110,18 @@ void Parser::parse_json(const char* text_or_path) {
     json = nlohmann::json::parse(json_payload);
   } catch (const nlohmann::json::exception& exception) {
     Logger::error(std::string("JSON parsing failed: ") + exception.what());
-    throw CalculatorException(Types::ERR_INVALID_JSON, std::string("Invalid JSON: ") + exception.what());
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_JSON),
+                              std::string("Invalid JSON: ") + exception.what());
   }
 
   if (!json.is_object()) {
-    throw CalculatorException(Types::ERR_INVALID_JSON, "JSON root must be an object.");
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_JSON), "JSON root must be an object.");
   }
 
   if (json.contains("first")) {
     if (!json.at("first").is_number_integer()) {
-      throw CalculatorException(Types::ERR_INVALID_JSON, "Field 'first' must be an integer.");
+      throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_JSON),
+                                "Field 'first' must be an integer.");
     }
     data_.first_number = json.at("first").get<int>();
     data_.has_first_number = 1;
@@ -127,7 +129,8 @@ void Parser::parse_json(const char* text_or_path) {
 
   if (json.contains("second")) {
     if (!json.at("second").is_number_integer()) {
-      throw CalculatorException(Types::ERR_INVALID_JSON, "Field 'second' must be an integer.");
+      throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_JSON),
+                                "Field 'second' must be an integer.");
     }
     data_.second_number = json.at("second").get<int>();
     data_.has_second_number = 1;
@@ -135,17 +138,19 @@ void Parser::parse_json(const char* text_or_path) {
 
   if (json.contains("operation")) {
     if (!json.at("operation").is_string()) {
-      throw CalculatorException(Types::ERR_INVALID_JSON, "Field 'operation' must be a string.");
+      throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_JSON),
+                                "Field 'operation' must be a string.");
     }
 
     const std::string operation_text = json.at("operation").get<std::string>();
-    int parsed_operation = Types::OP_NONE;
+    int parsed_operation = static_cast<int>(Types::OperationCode::OP_NONE);
     if (parse_operation(operation_text.c_str(), &parsed_operation) == 0) {
       Logger::warn(std::string("Invalid operation in JSON: ") + operation_text);
-      throw CalculatorException(Types::ERR_INVALID_OPERATION, std::string("Invalid operation: ") + operation_text);
+      throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_OPERATION),
+                                std::string("Invalid operation: ") + operation_text);
     }
 
-    data_.operation = parsed_operation;
+    data_.operation = static_cast<Types::OperationCode>(parsed_operation);
   }
 
   Logger::debug("Parser::parse_json finished successfully.");
@@ -155,7 +160,7 @@ void Parser::parse_arguments(int argc, char** argv) {
   int option = 0;
   int long_index = 0;
   int parsed_number = 0;
-  int parsed_operation = Types::OP_NONE;
+  int parsed_operation = static_cast<int>(Types::OperationCode::OP_NONE);
   static struct option long_options[] = {
       {.name = "first", .has_arg = required_argument, .flag = nullptr, .val = 'f'},
       {.name = "second", .has_arg = required_argument, .flag = nullptr, .val = 's'},
@@ -177,7 +182,8 @@ void Parser::parse_arguments(int argc, char** argv) {
     case 'f':
       if (parse_int(optarg, &parsed_number) == 0) {
         Logger::warn(std::string("Failed to parse first number: ") + optarg);
-        throw CalculatorException(Types::ERR_INVALID_NUMBER, std::string("Invalid first number: ") + optarg);
+        throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_NUMBER),
+                                  std::string("Invalid first number: ") + optarg);
       }
       data_.first_number = parsed_number;
       data_.has_first_number = 1;
@@ -186,7 +192,8 @@ void Parser::parse_arguments(int argc, char** argv) {
     case 's':
       if (parse_int(optarg, &parsed_number) == 0) {
         Logger::warn(std::string("Failed to parse second number: ") + optarg);
-        throw CalculatorException(Types::ERR_INVALID_NUMBER, std::string("Invalid second number: ") + optarg);
+        throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_NUMBER),
+                                  std::string("Invalid second number: ") + optarg);
       }
       data_.second_number = parsed_number;
       data_.has_second_number = 1;
@@ -195,9 +202,10 @@ void Parser::parse_arguments(int argc, char** argv) {
     case 'o':
       if (parse_operation(optarg, &parsed_operation) == 0) {
         Logger::warn(std::string("Failed to parse operation: ") + optarg);
-        throw CalculatorException(Types::ERR_INVALID_OPERATION, std::string("Invalid operation: ") + optarg);
+        throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_OPERATION),
+                                  std::string("Invalid operation: ") + optarg);
       }
-      data_.operation = parsed_operation;
+      data_.operation = static_cast<Types::OperationCode>(parsed_operation);
       Logger::info(std::string("Parsed operation: ") + optarg);
       break;
     case 'j':
@@ -210,13 +218,15 @@ void Parser::parse_arguments(int argc, char** argv) {
     case '?':
     default:
       Logger::warn("Unknown option or unexpected argument received.");
-      throw CalculatorException(Types::ERR_UNKNOWN_OPTION, "Unknown option or unexpected argument.");
+      throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_UNKNOWN_OPTION),
+                                "Unknown option or unexpected argument.");
     }
   }
 
   if (optind < argc) {
     Logger::warn("Unexpected positional arguments found.");
-    throw CalculatorException(Types::ERR_UNKNOWN_OPTION, "Unexpected positional arguments.");
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_UNKNOWN_OPTION),
+                              "Unexpected positional arguments.");
   }
 
   Logger::debug("Parser::parse_arguments finished.");

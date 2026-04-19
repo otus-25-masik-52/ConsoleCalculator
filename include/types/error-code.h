@@ -1,7 +1,7 @@
 #pragma once
 
 namespace Calculator::Types {
-enum ErrorCode {
+enum class ErrorCode {
   ERR_NONE = 0,
   ERR_UNKNOWN_OPTION = 1,
   ERR_INVALID_NUMBER = 2,

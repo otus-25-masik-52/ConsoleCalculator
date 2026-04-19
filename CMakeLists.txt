@@ -41,7 +41,6 @@ FetchContent_MakeAvailable(ConsoleCalculatorMathLib NlohmannJsonLib Googletest S
 add_library(calculator_core
   src/abacus.cpp
   src/checker.cpp
-  src/initializer.cpp
   src/logger.cpp
   src/parser.cpp
   src/printer.cpp

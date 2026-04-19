@@ -6,6 +6,7 @@ namespace Calculator {
 class Abacus : public ICalculator {
  public:
   explicit Abacus(Types::CalculatorData& data);
+  ~Abacus() override = default;
 
   void calculate_result();
 
