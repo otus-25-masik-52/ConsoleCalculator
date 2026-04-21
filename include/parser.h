@@ -1,11 +1,23 @@
 #pragma once
 
-#include "types/calculator-data.h"
+#include <string>
+
+#include "impl/icalculator.h"
 
 namespace Calculator {
-  void parse_arguments(int argc, char **argv, Types::CalculatorData *data);
+class Parser : public ICalculator {
+ public:
+  explicit Parser(Types::CalculatorData& data);
+  ~Parser() override = default;
 
-  int parse_int(const char *text, int *value);
+  static int parse_int(const char* text, int* value);
+  static int parse_operation(const char* text, int* operation);
+  void parse_json(const char* text_or_path);
 
-  int parse_operation(const char *text, int *operation);
+  void parse_arguments(int argc, char** argv);
+
+ private:
+  static std::string read_json_payload(const char* text_or_path);
+};
+
 } // namespace Calculator

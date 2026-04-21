@@ -3,6 +3,11 @@ IndentWidth: 2
 TabWidth: 2
 UseTab: Never
 
+NamespaceIndentation: None
+
+IndentAccessModifiers: false
+AccessModifierOffset: -1
+
 ColumnLimit: 120
 
 BreakBeforeBraces: Attach
@@ -27,4 +32,4 @@ AlignOperands: Align
 AlignTrailingComments: true
 
 Cpp11BracedListStyle: true
-Standard: c++17
+Standard: c++20
