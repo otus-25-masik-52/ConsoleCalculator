@@ -64,6 +64,9 @@ void Printer::print_error(const int error_code) {
   case static_cast<int>(Types::ErrorCode::ERR_INVALID_JSON):
     printf("Error: invalid JSON input.\n");
     break;
+  case static_cast<int>(Types::ErrorCode::ERR_STORAGE):
+    printf("Error: storage subsystem failed.\n");
+    break;
   default:
     printf("Error: unknown error.\n");
     break;

@@ -1,0 +1,51 @@
+services:
+  cc_db:
+    image: postgres:17
+    container_name: console_calculator_database
+    environment:
+      POSTGRES_DB: console_calculator
+      POSTGRES_USER: cc
+      POSTGRES_PASSWORD_FILE: /run/secrets/cc_db_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - calculator_pgdata:/var/lib/postgresql/data
+    secrets:
+      - cc_db_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cc -d console_calculator"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  cc_app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: console_calculator_app
+    depends_on:
+      cc_db:
+        condition: service_healthy
+    environment:
+      CC_DB_HOST: cc_db
+      CC_DB_PORT: 5432
+      CC_DB_NAME: console_calculator
+      CC_DB_USER: cc
+      CC_DB_PASSWORD_FILE: /run/secrets/cc_db_password
+    secrets:
+      - cc_db_password
+    command: sleep infinity
+    user: "10001:10001"
+    security_opt:
+      - no-new-privileges:true
+    cap_drop:
+      - ALL
+    stdin_open: true
+    tty: true
+
+volumes:
+  calculator_pgdata:
+
+secrets:
+  cc_db_password:
+    file: ./secrets/cc_db_password.txt
