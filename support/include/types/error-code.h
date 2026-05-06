@@ -13,6 +13,7 @@ enum class ErrorCode {
   ERR_NEGATIVE_FACTORIAL = 8,
   ERR_NEGATIVE_POWER = 9,
   ERR_OVERFLOW = 10,
-  ERR_INVALID_JSON = 11
+  ERR_INVALID_JSON = 11,
+  ERR_STORAGE = 12
 };
 } // namespace Calculator::Types

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "impl/icalculator.h"
+#include "../../core/include/interfaces/icalculator.h"
 
 namespace Calculator {
 class Printer : public ICalculator {
