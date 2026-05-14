@@ -1,6 +1,7 @@
 #include "logger.h"
 
 #include <filesystem>
+#include <vector>
 
 #include "spdlog/sinks/basic_file_sink.h"
 #include "spdlog/sinks/stdout_color_sinks.h"

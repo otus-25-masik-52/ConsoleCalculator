@@ -2,7 +2,7 @@
 
 #include <string>
 
-#include "impl/icalculator.h"
+#include "../../core/include/interfaces/icalculator.h"
 
 namespace Calculator {
 class Parser : public ICalculator {

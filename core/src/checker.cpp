@@ -42,10 +42,6 @@ void Checker::check_arguments() {
                               "Second number is missing.");
   }
 
-  if (data_.operation == Types::OperationCode::OP_DIV && data_.second_number == 0) {
-    Logger::warn("Division by zero detected before calculation.");
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_DIVISION_BY_ZERO), "Division by zero.");
-  }
 
   if (data_.operation == Types::OperationCode::OP_POW && data_.second_number < 0) {
     Logger::warn("Negative power is not supported.");
