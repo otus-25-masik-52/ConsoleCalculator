@@ -1,0 +1,57 @@
+services:
+  cc_db:
+    image: postgres:17
+    container_name: console_calculator_database
+    environment:
+      POSTGRES_DB: console_calculator
+      POSTGRES_USER: admin
+      POSTGRES_PASSWORD_FILE: /run/secrets/cc_db_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - calculator_pgdata:/var/lib/postgresql/data
+    secrets:
+      - cc_db_password
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U cc -d console_calculator"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  ccs_app:
+    build:
+      context: ../..
+      dockerfile: .devcontainer/default/Dockerfile
+      args:
+        DEV_UID: 1000
+        DEV_GID: 1000
+        DEV_USER: ccsu
+    container_name: console_calculator_server_app
+    depends_on:
+      cc_db:
+        condition: service_healthy
+    ports:
+      - "2223:22"
+    volumes:
+      - ../..:/ccs_app
+      - ccs_build:/ccs_build
+      - ${HOME}/.ssh/authorized_keys:/home/ccsu/.ssh/authorized_keys:ro
+    environment:
+      CC_DB_HOST: cc_db
+      CC_DB_PORT: 5432
+      CC_DB_NAME: console_calculator
+      CC_DB_USER: admin
+      CC_DB_PASSWORD_FILE: /run/secrets/cc_db_password
+    secrets:
+      - cc_db_password
+    command: /usr/sbin/sshd -D -e
+    stdin_open: true
+    tty: true
+
+volumes:
+  calculator_pgdata:
+  ccs_build:
+
+secrets:
+  cc_db_password:
+    file: ../../secrets/cc_db_password.txt

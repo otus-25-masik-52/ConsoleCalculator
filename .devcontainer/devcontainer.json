@@ -1,0 +1,10 @@
+{
+  "name": "Ssh",  # Default or Ssh
+  "dockerComposeFile": "ssh/compose.yaml",  # default/compose.yaml or ssh/compose.yaml
+  "service": "ccs_app",
+  "runServices": ["cc_db", "ccs_app"],
+  "workspaceFolder": "/ccs_app",
+  "shutdownAction": "stopCompose",
+  "overrideCommand": false,
+  "remoteUser": "ccsu"
+}

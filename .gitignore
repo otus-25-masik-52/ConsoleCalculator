@@ -42,3 +42,9 @@
 
 # IDE directory
 .idea
+
+# Ignore real secrets
+secrets/*.txt
+
+# Keep examples/templates
+!secrets/*.txt.example
