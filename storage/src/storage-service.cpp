@@ -15,7 +15,8 @@ void StorageService::initialize() {
   Logger::info("Storage initialization finished.");
 }
 
-std::optional<Types::OperationRecord> StorageService::find(int first_number, std::optional<int> second_number,
+std::optional<Types::OperationRecord> StorageService::find(const int first_number,
+                                                           const std::optional<int> second_number,
                                                            const std::string& operation) const {
   return cache_repository_.find(first_number, second_number, operation);
 }

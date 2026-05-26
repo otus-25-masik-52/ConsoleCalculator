@@ -6,7 +6,7 @@
 namespace Calculator {
 class CalculatorException : public std::runtime_error {
  public:
-  CalculatorException(int error_code, const std::string& message)
+  CalculatorException(const int error_code, const std::string& message)
       : std::runtime_error(message), error_code_(error_code) {}
 
   [[nodiscard]] int error_code() const noexcept {

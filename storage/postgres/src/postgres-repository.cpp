@@ -36,7 +36,7 @@ CREATE TABLE IF NOT EXISTS operation_history (
 );
 )sql";
 
-  auto result = connection_.execute(kSql);
+  const auto result = connection_.execute(kSql);
   result.expect_command_ok();
   Logger::info("PostgreSQL schema initialized.");
 }
@@ -85,7 +85,7 @@ ON CONFLICT (cache_key) DO NOTHING;
       record.cache_key(),
   };
 
-  auto result = connection_.execute_params(kSql, params);
+  const auto result = connection_.execute_params(kSql, params);
   result.expect_command_ok();
   Logger::info("Operation saved to PostgreSQL with key: " + record.cache_key());
 }

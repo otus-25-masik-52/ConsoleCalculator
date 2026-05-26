@@ -1,5 +1,17 @@
 #pragma once
 
+#include <cstdint>
+
 namespace Calculator::Types {
-enum class OperationCode { OP_NONE = 0, OP_ADD, OP_SUB, OP_MUL, OP_DIV, OP_POW, OP_FACT };
+
+enum class OperationCode : std::uint8_t {
+  OPERATION_NONE = 0,
+  OPERATION_ADDITION,
+  OPERATION_SUBTRACTION,
+  OPERATION_MULTIPLICATION,
+  OPERATION_DIVISION,
+  OPERATION_EXPONENTIATION,
+  OPERATION_FACTORIAL,
+};
+
 } // namespace Calculator::Types

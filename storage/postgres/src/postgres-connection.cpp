@@ -36,7 +36,7 @@ std::string PostgresConnection::last_error() const {
 
 void PostgresConnection::ensure_connected() const {
   if (!is_connected()) {
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_STORAGE),
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_STORAGE),
                               "PostgreSQL connection failed: " + last_error());
   }
 }

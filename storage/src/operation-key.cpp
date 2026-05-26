@@ -14,7 +14,7 @@ bool OperationKey::is_factorial(const std::string& operation) {
   return operation == "fact" || operation == "factorial" || operation == "!";
 }
 
-std::string OperationKey::symbol_for(const std::string& operation) {
+std::string_view OperationKey::symbol_for(const std::string& operation) {
   if (operation == "add" || operation == "+") {
     return "+";
   }
@@ -34,17 +34,18 @@ std::string OperationKey::symbol_for(const std::string& operation) {
     return "fact";
   }
 
-  throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_INVALID_OPERATION),
+  throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_INVALID_OPERATION),
                             "Unsupported operation for storage key: " + operation);
 }
 
-std::string OperationKey::make(int first_number, std::optional<int> second_number, const std::string& operation) {
+std::string OperationKey::make(const int first_number, const std::optional<int> second_number,
+                               const std::string& operation) {
   if (is_factorial(operation)) {
     return "fact(" + std::to_string(first_number) + ")";
   }
 
   if (!second_number.has_value()) {
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_MISSING_SECOND_NUMBER),
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_MISSING_SECOND_NUMBER),
                               "Second number is required for binary operation storage key.");
   }
 
@@ -55,6 +56,6 @@ std::string OperationKey::make(int first_number, std::optional<int> second_numbe
     std::swap(left, right);
   }
 
-  return std::to_string(left) + symbol_for(operation) + std::to_string(right);
+  return std::to_string(left) + std::string(symbol_for(operation)) + std::to_string(right);
 }
 } // namespace Calculator::Storage

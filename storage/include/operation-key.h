@@ -19,7 +19,7 @@ class OperationKey final {
 
  private:
   [[nodiscard]] static bool is_commutative(const std::string& operation);
-  [[nodiscard]] static std::string symbol_for(const std::string& operation);
+  [[nodiscard]] static std::string_view symbol_for(const std::string& operation);
   [[nodiscard]] static bool is_factorial(const std::string& operation);
 };
 } // namespace Calculator::Storage

@@ -13,6 +13,7 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     pkg-config \
     libpq-dev \
     postgresql-client \
+    libboost-all-dev \
     valgrind \
     gdb \
     openssh-server \
@@ -50,10 +51,23 @@ RUN set -eux; \
     fi; \
     \
     echo "${DEV_USER}:dev_container_password_disabled" | chpasswd; \
-    mkdir -p "/home/${DEV_USER}/.ssh" /ccs_app /ccs_build /run/sshd; \
-    chown -R "${DEV_UID}:${DEV_GID}" "/home/${DEV_USER}" /ccs_app /ccs_build; \
+    mkdir -p \
+        "/home/${DEV_USER}/.ssh" \
+        /ccs_app \
+        /ccs_build \
+        /run/sshd \
+        /var/log/console-calculator \
+        /var/lib/console-calculator; \
+    chown -R "${DEV_UID}:${DEV_GID}" \
+        "/home/${DEV_USER}" \
+        /ccs_app \
+        /ccs_build \
+        /var/log/console-calculator \
+        /var/lib/console-calculator; \
     chmod 700 "/home/${DEV_USER}/.ssh"; \
-    chmod 0755 /run/sshd
+    chmod 0755 /run/sshd; \
+    chmod 0755 /var/log/console-calculator; \
+    chmod 0755 /var/lib/console-calculator
 
 
 RUN sed -i 's/^#\?PasswordAuthentication .*/PasswordAuthentication no/' /etc/ssh/sshd_config \

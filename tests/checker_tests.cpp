@@ -13,8 +13,8 @@ Calculator::Types::CalculatorData make_data() {
                                            .result = 0,
                                            .has_first_number = 0,
                                            .has_second_number = 0,
-                                           .operation = Calculator::Types::OperationCode::OP_NONE,
-                                           .error_code = Calculator::Types::ErrorCode::ERR_NONE,
+                                           .operation = Calculator::Types::OperationCode::OPERATION_NONE,
+                                           .error_code = Calculator::Types::ErrorCode::ERROR_NONE,
                                            .need_help = 0};
 }
 } // namespace
@@ -30,7 +30,7 @@ TEST(CheckerTest, ThrowsWhenOperationMissing) {
     checker.check_arguments();
     FAIL();
   } catch (const Calculator::CalculatorException& exception) {
-    EXPECT_EQ(exception.error_code(), static_cast<int>(Calculator::Types::ErrorCode::ERR_MISSING_OPERATION));
+    EXPECT_EQ(exception.error_code(), static_cast<int>(Calculator::Types::ErrorCode::ERROR_MISSING_OPERATION));
   }
 }
 
@@ -38,7 +38,7 @@ TEST(CheckerTest, ThrowsForNegativeFactorial) {
   auto data = make_data();
   data.first_number = -1;
   data.has_first_number = 1;
-  data.operation = Calculator::Types::OperationCode::OP_FACT;
+  data.operation = Calculator::Types::OperationCode::OPERATION_FACTORIAL;
 
   Calculator::Checker checker(data);
 
@@ -46,7 +46,7 @@ TEST(CheckerTest, ThrowsForNegativeFactorial) {
     checker.check_arguments();
     FAIL();
   } catch (const Calculator::CalculatorException& exception) {
-    EXPECT_EQ(exception.error_code(), static_cast<int>(Calculator::Types::ErrorCode::ERR_NEGATIVE_FACTORIAL));
+    EXPECT_EQ(exception.error_code(), static_cast<int>(Calculator::Types::ErrorCode::ERROR_NEGATIVE_FACTORIAL));
   }
 }
 
@@ -56,7 +56,7 @@ TEST(CheckerTest, AcceptsValidBinaryOperation) {
   data.second_number = 2;
   data.has_first_number = 1;
   data.has_second_number = 1;
-  data.operation = Calculator::Types::OperationCode::OP_DIV;
+  data.operation = Calculator::Types::OperationCode::OPERATION_DIVISION;
 
   Calculator::Checker checker(data);
 

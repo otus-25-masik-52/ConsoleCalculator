@@ -16,20 +16,20 @@ void Checker::check_arguments() {
     return;
   }
 
-  if (data_.operation == Types::OperationCode::OP_NONE) {
+  if (data_.operation == Types::OperationCode::OPERATION_NONE) {
     Logger::warn("Operation is missing.");
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_MISSING_OPERATION), "Operation is missing.");
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_MISSING_OPERATION), "Operation is missing.");
   }
 
   if (data_.has_first_number == 0) {
     Logger::warn("First number is missing.");
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_MISSING_FIRST_NUMBER), "First number is missing.");
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_MISSING_FIRST_NUMBER), "First number is missing.");
   }
 
-  if (data_.operation == Types::OperationCode::OP_FACT) {
+  if (data_.operation == Types::OperationCode::OPERATION_FACTORIAL) {
     if (data_.first_number < 0) {
       Logger::warn("Negative factorial argument received.");
-      throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_NEGATIVE_FACTORIAL),
+      throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_NEGATIVE_FACTORIAL),
                                 "Factorial argument must be non-negative.");
     }
     Logger::debug("Checker finished successfully for factorial.");
@@ -38,14 +38,14 @@ void Checker::check_arguments() {
 
   if (data_.has_second_number == 0) {
     Logger::warn("Second number is missing.");
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_MISSING_SECOND_NUMBER),
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_MISSING_SECOND_NUMBER),
                               "Second number is missing.");
   }
 
 
-  if (data_.operation == Types::OperationCode::OP_POW && data_.second_number < 0) {
+  if (data_.operation == Types::OperationCode::OPERATION_EXPONENTIATION && data_.second_number < 0) {
     Logger::warn("Negative power is not supported.");
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_NEGATIVE_POWER),
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_NEGATIVE_POWER),
                               "Negative power is not supported.");
   }
 
