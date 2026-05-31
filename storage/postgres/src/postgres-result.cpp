@@ -8,7 +8,7 @@
 namespace Calculator::Storage {
 PostgresResult::PostgresResult(pg_result* result) : result_(result) {
   if (result_ == nullptr) {
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_STORAGE), "PostgreSQL result was not created.");
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_STORAGE), "PostgreSQL result was not created.");
   }
 }
 
@@ -20,18 +20,17 @@ void PostgresResult::PgResultDeleter::operator()(pg_result* result) const noexce
 
 pg_result* PostgresResult::get() const {
   if (result_ == nullptr) {
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_STORAGE), "PostgreSQL result is empty.");
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_STORAGE), "PostgreSQL result is empty.");
   }
   return result_.get();
 }
 
-void PostgresResult::expect_status(int expected_status, const std::string& expected_status_name) const {
-  const auto actual_status = PQresultStatus(get());
-  if (actual_status != expected_status) {
+void PostgresResult::expect_status(const int expected_status, const std::string& expected_status_name) const {
+  if (const auto actual_status = PQresultStatus(get()); actual_status != expected_status) {
     const char* error_message = PQresultErrorMessage(get());
-    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERR_STORAGE),
-                              "Unexpected PostgreSQL result status. Expected " + expected_status_name +
-                                  ", got " + std::string(PQresStatus(actual_status)) + ". " +
+    throw CalculatorException(static_cast<int>(Types::ErrorCode::ERROR_STORAGE),
+                              "Unexpected PostgreSQL result status. Expected " + expected_status_name + ", got " +
+                                  std::string(PQresStatus(actual_status)) + ". " +
                                   (error_message != nullptr ? std::string(error_message) : std::string{}));
   }
 }
@@ -52,11 +51,11 @@ int PostgresResult::column_count() const {
   return PQnfields(get());
 }
 
-bool PostgresResult::is_null(int row, int column) const {
+bool PostgresResult::is_null(const int row, const int column) const {
   return PQgetisnull(get(), row, column) != 0;
 }
 
-std::string PostgresResult::value(int row, int column) const {
+std::string PostgresResult::value(const int row, const int column) const {
   if (is_null(row, column)) {
     return {};
   }

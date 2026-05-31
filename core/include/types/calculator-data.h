@@ -10,8 +10,8 @@ struct CalculatorData {
   int result = 0;
   int has_first_number = 0;
   int has_second_number = 0;
-  OperationCode operation = OperationCode::OP_NONE;
-  ErrorCode error_code = ErrorCode::ERR_NONE;
+  OperationCode operation = OperationCode::OPERATION_NONE;
+  ErrorCode error_code = ErrorCode::ERROR_NONE;
   int need_help = 0;
 };
 } // namespace Calculator::Types

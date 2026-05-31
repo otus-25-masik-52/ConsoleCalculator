@@ -10,7 +10,7 @@
 namespace Calculator {
 class Logger::Impl final {
  public:
-  void init(std::string_view file_path, std::string_view logger_name) {
+  void init(const std::string_view file_path, const std::string_view logger_name) {
     if (logger_ != nullptr) {
       return;
     }
@@ -53,22 +53,27 @@ class Logger::Impl final {
     spdlog::shutdown();
   }
 
-  void trace(std::string_view message) {
+  void trace(const std::string_view message) {
     logger().trace(message);
   }
-  void debug(std::string_view message) {
+
+  void debug(const std::string_view message) {
     logger().debug(message);
   }
-  void info(std::string_view message) {
+
+  void info(const std::string_view message) {
     logger().info(message);
   }
-  void warn(std::string_view message) {
+
+  void warn(const std::string_view message) {
     logger().warn(message);
   }
-  void error(std::string_view message) {
+
+  void error(const std::string_view message) {
     logger().error(message);
   }
-  void critical(std::string_view message) {
+
+  void critical(const std::string_view message) {
     logger().critical(message);
   }
 
@@ -88,30 +93,38 @@ Logger::Impl& Logger::impl() {
   return instance;
 }
 
-void Logger::init(std::string_view file_path, std::string_view logger_name) {
+void Logger::init(const std::string_view file_path, const std::string_view logger_name) {
   impl().init(file_path, logger_name);
 }
-void Logger::trace(std::string_view message) {
+
+void Logger::trace(const std::string_view message) {
   impl().trace(message);
 }
-void Logger::debug(std::string_view message) {
+
+void Logger::debug(const std::string_view message) {
   impl().debug(message);
 }
-void Logger::info(std::string_view message) {
+
+void Logger::info(const std::string_view message) {
   impl().info(message);
 }
-void Logger::warn(std::string_view message) {
+
+void Logger::warn(const std::string_view message) {
   impl().warn(message);
 }
-void Logger::error(std::string_view message) {
+
+void Logger::error(const std::string_view message) {
   impl().error(message);
 }
-void Logger::critical(std::string_view message) {
+
+void Logger::critical(const std::string_view message) {
   impl().critical(message);
 }
+
 bool Logger::is_initialized() noexcept {
   return impl().is_initialized();
 }
+
 void Logger::shutdown() noexcept {
   impl().shutdown();
 }

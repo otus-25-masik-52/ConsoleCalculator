@@ -6,8 +6,11 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
+option(CALCULATOR_SERVER_ENABLE_TSAN "Build with ThreadSanitizer" OFF)
+
 include(FetchContent)
 include(CTest)
+include(GNUInstallDirs)
 
 # =========================
 # Dependencies
@@ -16,6 +19,12 @@ include(CTest)
 FetchContent_Declare(
   ConsoleCalculatorMathLib
   GIT_REPOSITORY https://github.com/otus-25-masik-52/ConsoleCalculatorMathLib.git
+  GIT_TAG master
+)
+
+FetchContent_Declare(
+  ConsoleCalculatorProtocol
+  GIT_REPOSITORY https://github.com/otus-25-masik-52/ConsoleCalculatorProtocol.git
   GIT_TAG master
 )
 
@@ -42,12 +51,22 @@ endif ()
 
 FetchContent_MakeAvailable(
   ConsoleCalculatorMathLib
+  ConsoleCalculatorProtocol
   NlohmannJsonLib
   Googletest
   Spdlog
 )
 
 find_package(PostgreSQL REQUIRED)
+find_package(Boost REQUIRED COMPONENTS system)
+find_package(Threads REQUIRED)
+
+function(calculator_enable_tsan target_name)
+  if (CALCULATOR_SERVER_ENABLE_TSAN AND (CMAKE_CXX_COMPILER_ID MATCHES "Clang|GNU"))
+    target_compile_options(${target_name} PRIVATE -fsanitize=thread -fno-omit-frame-pointer)
+    target_link_options(${target_name} PRIVATE -fsanitize=thread)
+  endif ()
+endfunction()
 
 # =========================
 # support
@@ -66,6 +85,8 @@ target_link_libraries(calculator_support
   PUBLIC
   spdlog::spdlog_header_only
 )
+
+calculator_enable_tsan(calculator_support)
 
 # =========================
 # core
@@ -88,26 +109,7 @@ target_link_libraries(calculator_core
   calculator_math
 )
 
-# =========================
-# io
-# =========================
-
-add_library(calculator_io
-  io/src/parser.cpp
-  io/src/printer.cpp
-)
-
-target_include_directories(calculator_io
-  PUBLIC
-  io/include
-)
-
-target_link_libraries(calculator_io
-  PUBLIC
-  calculator_core
-  calculator_support
-  nlohmann_json::nlohmann_json
-)
+calculator_enable_tsan(calculator_core)
 
 # =========================
 # storage
@@ -136,40 +138,49 @@ target_link_libraries(calculator_storage
   PostgreSQL::PostgreSQL
 )
 
+calculator_enable_tsan(calculator_storage)
+
 # =========================
-# app
+# Linux service / TCP JSON server
 # =========================
 
-add_library(calculator_app
-  app/src/runner.cpp
+add_library(calculator_server_lib
+  server/src/in-memory-operation-storage.cpp
+  server/src/request-handler.cpp
+  server/src/server-config.cpp
+  server/src/service-application.cpp
+  server/src/signal-handler.cpp
+  server/src/storage-worker.cpp
+  server/src/tcp-json-server.cpp
 )
 
-target_include_directories(calculator_app
+target_include_directories(calculator_server_lib
   PUBLIC
-  app/include
-  storage/postgres/include
+  server/include
 )
 
-target_link_libraries(calculator_app
+target_link_libraries(calculator_server_lib
   PUBLIC
   calculator_core
-  calculator_io
   calculator_storage
   calculator_support
+  calculator_protocol
+  Boost::system
+  Threads::Threads
 )
 
-# =========================
-# executable
-# =========================
+calculator_enable_tsan(calculator_server_lib)
 
-add_executable(calculator
-  app/main.cpp
+add_executable(calculator_server
+  server/main.cpp
 )
 
-target_link_libraries(calculator
+target_link_libraries(calculator_server
   PRIVATE
-  calculator_app
+  calculator_server_lib
 )
+
+calculator_enable_tsan(calculator_server)
 
 # =========================
 # tests
@@ -180,18 +191,21 @@ if (BUILD_TESTING)
     tests/cache_repository_tests.cpp
     tests/checker_tests.cpp
     tests/operation_key_tests.cpp
-    tests/parser_tests.cpp
-    tests/printer_tests.cpp
+    tests/request_handler_tests.cpp
+    tests/tcp_json_server_tests.cpp
   )
 
   target_link_libraries(calculator_tests
     PRIVATE
     calculator_core
-    calculator_io
     calculator_storage
     calculator_support
+    calculator_server_lib
+    calculator_protocol
     GTest::gtest_main
   )
+
+  calculator_enable_tsan(calculator_tests)
 
   include(GoogleTest)
   gtest_discover_tests(calculator_tests)
@@ -201,9 +215,17 @@ endif ()
 # install
 # =========================
 
-include(GNUInstallDirs)
+install(
+  TARGETS calculator_server
+  RUNTIME DESTINATION usr/bin
+)
 
 install(
-  TARGETS calculator
-  RUNTIME DESTINATION ${CMAKE_INSTALL_BINDIR}
+  FILES config/server.conf
+  DESTINATION etc/console-calculator
+)
+
+install(
+  FILES systemd/console-calculator-server.service
+  DESTINATION lib/systemd/system
 )

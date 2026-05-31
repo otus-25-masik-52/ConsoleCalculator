@@ -17,7 +17,7 @@ void CacheRepository::warm_up(const std::vector<Types::OperationRecord>& records
   Logger::info("Cache warm-up completed. Records loaded: " + std::to_string(cache_.size()));
 }
 
-std::optional<Types::OperationRecord> CacheRepository::find(int first_number, std::optional<int> second_number,
+std::optional<Types::OperationRecord> CacheRepository::find(const int first_number, std::optional<int> second_number,
                                                             const std::string& operation) const {
   return find_by_key(OperationKey::make(first_number, second_number, operation));
 }
